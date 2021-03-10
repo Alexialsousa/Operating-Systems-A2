@@ -7,18 +7,18 @@
  */
 
 /**
- *
  * @author Kerly Titus
  */
 public class Driver {
 
-    /** 
+    /**
      * main class
+     *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-    	Network objNetwork = new Network( );            /* Activate the network */
+
+        Network objNetwork = new Network();            /* Activate the network */
         objNetwork.start();
 
         Server server1 = new Server("Thread1");
@@ -32,9 +32,9 @@ public class Driver {
 
         Client objClient2 = new Client("receiving");        /* Start the receiving client thread */
         objClient2.start();
-        
-      /*..............................................................................................................................................................*/
-       
+
+        /*..............................................................................................................................................................*/
+
     }
-    
- }
+
+}
