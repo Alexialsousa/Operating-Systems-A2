@@ -3,6 +3,7 @@ import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.InputMismatchException;
+import java.util.concurrent.Semaphore;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -140,15 +141,11 @@ public class Client extends Thread {
 
         while (i < getNumberOfTransactions()) {
 
-            while (Network.getInBufferStatus().equals("full")) {
-                Thread.yield();    /* Yield the cpu if the network input buffer is full */
-            }
-
             transaction[i].setTransactionStatus("sent");   /* Set current transaction status */
 
-            /* System.out.println("\n DEBUG : Client.sendTransactions() - sending transaction on account " + transaction[i].getAccountNumber()); */
+            System.out.println("\n DEBUG : Client.sendTransactions() - sending transaction on account " + transaction[i].getAccountNumber());
 
-            Network.send(transaction[i]);                            /* Transmit current transaction */
+            Network.send(transaction[i]);       /* Transmit current transaction */
             i++;
         }
 
@@ -164,16 +161,12 @@ public class Client extends Thread {
         int i = 0;     /* Index of transaction array */
 
         while (i < getNumberOfTransactions()) {
-            while (Network.getOutBufferStatus().equals("empty")) {
-                Thread.yield();    /* Yield the cpu if the network output buffer is full */
 
-            }
-
-            Network.receive(transact);                                /* Receive updated transaction from the network buffer */
+            Network.receive(transact);        /* Receive updated transaction from the network buffer */
 
             /* System.out.println("\n DEBUG : Client.receiveTransactions() - receiving updated transaction on account " + transact.getAccountNumber()); */
 
-            System.out.println(transact);                               /* Display updated transaction */
+            System.out.println(transact);      /* Display updated transaction */
             i++;
         }
     }

@@ -246,23 +246,13 @@ public class Server extends Thread {
 
         /* Process the accounts until the client disconnects */
         while ((!Network.getClientConnectionStatus().equals("disconnected"))) {
-            // while ( (Network.getInBufferStatus().equals("empty") && !Network.getClientConnectionStatus().equals("disconnected")) )
-            // {
-            //	 Thread.yield(); 	/* Yield the cpu if the network input buffer is empty */
-            // }
+            /* System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber()); */
 
-            if (!Network.getInBufferStatus().equals("empty")) {
-                /* System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber()); */
+            Network.transferIn(trans);     /* Transfer a transaction from the network input buffer */
 
-                Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
+            accIndex = findAccount(trans.getAccountNumber());
 
-                accIndex = findAccount(trans.getAccountNumber());
-                /* Process deposit operation */
-                /* System.out.println("\n DEBUG : Server.processTransactions() - Deposit of " + trans.getTransactionAmount() + " in account " + trans.getAccountNumber()); */
-                /* Process withdraw operation */
-                /* System.out.println("\n DEBUG : Server.processTransactions() - Withdrawal of " + trans.getTransactionAmount() + " from account " + trans.getAccountNumber()); */
-                /* Process query operation */
-                /* System.out.println("\n DEBUG : Server.processTransactions() - Obtaining balance from account" + trans.getAccountNumber()); */
+            if (!Network.getClientConnectionStatus().equals("disconnected")) {
                 switch (trans.getOperationType()) {
                     case "DEPOSIT" -> {
                         newBalance = deposit(accIndex, trans.getTransactionAmount());
@@ -281,22 +271,15 @@ public class Server extends Thread {
                     }
                 }
 
-
-                while (Network.getOutBufferStatus().equals("full")) {
-                    Thread.yield();        /* Yield the cpu if the network output buffer is full */
-                }
-
                 /* System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber()); */
 
                 Network.transferOut(trans);                                    /* Transfer a completed transaction from the server to the network output buffer */
                 setNumberOfTransactions((getNumberOfTransactions() + 1));    /* Count the number of transactions processed */
-            } else {
-                Thread.yield();
+
             }
         }
 
         /* System.out.println("\n DEBUG : Server.processTransactions() - " + getNumberOfTransactions() + " accounts updated"); */
-
         return true;
     }
 
